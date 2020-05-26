@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Color Wars</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="css/main.css" rel="stylesheet" type="text/css">
+    <script type="module">
+        import * as game from './__target__/game.js';
+
+        window.game = game.game;
+    </script>
+</head>
+<body>
+<div id="container">
+    <div class="row">
+        <div id="settings_div">
+            <div>
+                <h1>Current Player: <span id="span_current_player">1</span></h1>
+            </div>
+            <div>
+                <h2>Player 1 score: <span id="span_player_0_score"></span></h2>
+                <h2>Player 2 score: <span id="span_player_1_score"></span></h2>
+            </div>
+            <div id="buttons_div" class="btn-group-vertical">
+            </div>
+        </div>
+        <div id="game_div">
+            <canvas id="game_canvas"></canvas>
+        </div>
+    </div>
+    <div id="statistics_div">
+        <canvas id="chart_canvas">
+        </canvas>
+    </div>
+    <div id="author_div">
+        <div>
+            <p>&copy; 2020 Damian Kurpiewski</p>
+        </div>
+    </div>
+</div>
+<script>
+    window.onload = function() {
+        game.start();
+    }
+</script>
+</body>
+</html>
