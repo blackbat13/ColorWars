@@ -1,4 +1,5 @@
 import random
+import math
 from lib.settings import Settings
 
 
@@ -41,7 +42,8 @@ class Game:
         return color
 
     def _greedy_computer(self) -> int:
-        board_copy = [[self._board[x][y] for y in range(self._settings.game_size)] for x in range(self._settings.game_size)]
+        board_copy = [[self._board[x][y] for y in range(self._settings.game_size)] for x in
+                      range(self._settings.game_size)]
         px, py = self._players_position[self._current_player]
         max_points = -1
         max_color = -1
@@ -53,15 +55,18 @@ class Game:
             if points > max_points:
                 max_points = points
                 max_color = color
-            self._board = [[board_copy[x][y] for y in range(self._settings.game_size)] for x in range(self._settings.game_size)]
+            self._board = [[board_copy[x][y] for y in range(self._settings.game_size)] for x in
+                           range(self._settings.game_size)]
 
-        self._board = [[board_copy[x][y] for y in range(self._settings.game_size)] for x in range(self._settings.game_size)]
+        self._board = [[board_copy[x][y] for y in range(self._settings.game_size)] for x in
+                       range(self._settings.game_size)]
         return max_color
 
     def _generate_buttons(self):
         buttons_div = document.getElementById("buttons_div")
         for i in range(len(self._colors)):
-            buttons_div.innerHTML += "<button type='button' id='button_color_" + str(i) + "' onclick='game.make_move(" + str(
+            buttons_div.innerHTML += "<button type='button' id='button_color_" + str(
+                i) + "' onclick='game.make_move(" + str(
                 i) + ")' style='background-color: " + self._colors[i] + "' class='btn btn-lg'>" + str(i) + "</button>"
         for i in range(len(self._colors)):
             self._buttons.append(document.getElementById("button_color_" + str(i)))
@@ -114,10 +119,52 @@ class Game:
         for x in range(self._settings.game_size):
             for y in range(self._settings.game_size):
                 self._context.fillStyle = self._colors[self._board[x][y]]
-                self._context.fillRect(x * self._settings.place_size, y * self._settings.place_size,
-                                       self._settings.place_size, self._settings.place_size)
-                self._context.strokeRect(x * self._settings.place_size, y * self._settings.place_size,
-                                         self._settings.place_size, self._settings.place_size)
+                self._draw_hexagon(x, y)
+                if self._settings.show_coordinates:
+                    self._draw_text(x, y, "(" + str(x) + "," + str(y) + ")")
+
+    def _draw_player_names(self):
+        x, y = self._players_position[0]
+        self._draw_text(x, y, "P1")
+        x, y = self._players_position[1]
+        self._draw_text(x, y, "P2")
+
+    def _draw_text(self, x, y, text):
+        x, y = self._coord_to_hex(x, y)
+        self._context.fillStyle = "#000000"
+        self._context.fillText(text, x + self._settings.place_size / 2, y + self._settings.place_size)
+
+    def _coord_to_hex(self, x, y):
+        hexagonAngle = 0.523598776
+        sideLength = self._settings.place_size
+
+        hexHeight = math.sin(hexagonAngle) * sideLength
+        hexRadius = math.cos(hexagonAngle) * sideLength
+        hexRectangleWidth = 2 * hexRadius
+        return x * hexRectangleWidth + ((y % 2) * hexRadius), y * (sideLength + hexHeight)
+
+    def _draw_hexagon(self, x, y):
+        x, y = self._coord_to_hex(x, y)
+        hexagonAngle = 0.523598776
+        sideLength = self._settings.place_size
+
+        hexHeight = math.sin(hexagonAngle) * sideLength
+        hexRadius = math.cos(hexagonAngle) * sideLength
+        hexRectangleHeight = sideLength + 2 * hexHeight
+        hexRectangleWidth = 2 * hexRadius
+
+        self._context.beginPath()
+        self._context.moveTo(x + hexRadius, y)
+        self._context.lineTo(x + hexRectangleWidth, y + hexHeight)
+        self._context.lineTo(x + hexRectangleWidth, y + hexHeight + sideLength)
+        self._context.lineTo(x + hexRadius, y + hexRectangleHeight)
+        self._context.lineTo(x, y + sideLength + hexHeight)
+        self._context.lineTo(x, y + hexHeight)
+        self._context.closePath()
+
+        self._context.fill()
+        self._context.fillStyle = "#000000"
+        self._context.stroke()
 
     def _change_color(self, x, y, old_color, new_color):
         if x < 0 or y < 0:
@@ -129,10 +176,21 @@ class Game:
 
         score = 1
         self._board[x][y] = new_color
-        score += self._change_color(x + 1, y, old_color, new_color)
-        score += self._change_color(x - 1, y, old_color, new_color)
-        score += self._change_color(x, y + 1, old_color, new_color)
-        score += self._change_color(x, y - 1, old_color, new_color)
+        if y % 2 == 0:
+            score += self._change_color(x - 1, y - 1, old_color, new_color)
+            score += self._change_color(x - 1, y, old_color, new_color)
+            score += self._change_color(x - 1, y + 1, old_color, new_color)
+            score += self._change_color(x, y - 1, old_color, new_color)
+            score += self._change_color(x + 1, y, old_color, new_color)
+            score += self._change_color(x, y + 1, old_color, new_color)
+        else:
+            score += self._change_color(x, y - 1, old_color, new_color)
+            score += self._change_color(x - 1, y, old_color, new_color)
+            score += self._change_color(x, y + 1, old_color, new_color)
+            score += self._change_color(x + 1, y - 1, old_color, new_color)
+            score += self._change_color(x + 1, y, old_color, new_color)
+            score += self._change_color(x + 1, y + 1, old_color, new_color)
+
         return score
 
 
