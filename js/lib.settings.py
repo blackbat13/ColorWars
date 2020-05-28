@@ -6,6 +6,7 @@ class Settings:
         self.__place_size: int = 0
         self.__game_size: int = 20
         self.__computer: bool = True
+        self.__show_coordinates : bool = False
 
     @property
     def width(self) -> int:
@@ -15,7 +16,11 @@ class Settings:
     def width(self, value: int):
         self.__width = value
         self.__size = min(self.__width, self.__height)
-        self.__place_size = self.__size // self.__game_size
+        self.__place_size = (self.__size / self.__game_size)
+        if self.__size == self.__width:
+            self.__place_size /= 1.8
+        else:
+            self.__place_size /= 1.55
 
     @property
     def height(self) -> int:
@@ -26,6 +31,10 @@ class Settings:
         self.__height = value
         self.__size = min(self.__width, self.__height)
         self.__place_size = self.__size // self.__game_size
+        if self.__size == self.__width:
+            self.__place_size /= 1.8
+        else:
+            self.__place_size /= 1.55
 
     @property
     def size(self) -> int:
@@ -42,3 +51,7 @@ class Settings:
     @property
     def computer(self) -> bool:
         return self.__computer
+
+    @property
+    def show_coordinates(self) -> bool:
+        return self.__show_coordinates

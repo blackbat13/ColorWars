@@ -1,4 +1,4 @@
-// Transcrypt'ed from Python, 2020-05-26 16:07:54
+// Transcrypt'ed from Python, 2020-05-28 13:59:20
 import {AssertionError, AttributeError, BaseException, DeprecationWarning, Exception, IndexError, IterableError, KeyError, NotImplementedError, RuntimeWarning, StopIteration, UserWarning, ValueError, Warning, __JsIterator__, __PyIterator__, __Terminal__, __add__, __and__, __call__, __class__, __envir__, __eq__, __floordiv__, __ge__, __get__, __getcm__, __getitem__, __getslice__, __getsm__, __gt__, __i__, __iadd__, __iand__, __idiv__, __ijsmod__, __ilshift__, __imatmul__, __imod__, __imul__, __in__, __init__, __ior__, __ipow__, __irshift__, __isub__, __ixor__, __jsUsePyNext__, __jsmod__, __k__, __kwargtrans__, __le__, __lshift__, __lt__, __matmul__, __mergefields__, __mergekwargtrans__, __mod__, __mul__, __ne__, __neg__, __nest__, __or__, __pow__, __pragma__, __proxy__, __pyUseJsNext__, __rshift__, __setitem__, __setproperty__, __setslice__, __sort__, __specialattrib__, __sub__, __super__, __t__, __terminal__, __truediv__, __withblock__, __xor__, abs, all, any, assert, bool, bytearray, bytes, callable, chr, copy, deepcopy, delattr, dict, dir, divmod, enumerate, filter, float, getattr, hasattr, input, int, isinstance, issubclass, len, list, map, max, min, object, ord, pow, print, property, py_TypeError, py_iter, py_metatype, py_next, py_reversed, py_typeof, range, repr, round, set, setattr, sorted, str, sum, tuple, zip} from './org.transcrypt.__runtime__.js';
 var __name__ = 'lib.settings';
 export var Settings =  __class__ ('Settings', [object], {
@@ -10,6 +10,7 @@ export var Settings =  __class__ ('Settings', [object], {
 		self.__place_size = 0;
 		self.__game_size = 20;
 		self.__computer = true;
+		self.__show_coordinates = false;
 	});},
 	get _get_width () {return __get__ (this, function (self) {
 		return self.__width;
@@ -17,7 +18,13 @@ export var Settings =  __class__ ('Settings', [object], {
 	get _set_width () {return __get__ (this, function (self, value) {
 		self.__width = value;
 		self.__size = min (self.__width, self.__height);
-		self.__place_size = Math.floor (self.__size / self.__game_size);
+		self.__place_size = self.__size / self.__game_size;
+		if (self.__size == self.__width) {
+			self.__place_size /= 1.8;
+		}
+		else {
+			self.__place_size /= 1.55;
+		}
 	});},
 	get _get_height () {return __get__ (this, function (self) {
 		return self.__height;
@@ -26,6 +33,12 @@ export var Settings =  __class__ ('Settings', [object], {
 		self.__height = value;
 		self.__size = min (self.__width, self.__height);
 		self.__place_size = Math.floor (self.__size / self.__game_size);
+		if (self.__size == self.__width) {
+			self.__place_size /= 1.8;
+		}
+		else {
+			self.__place_size /= 1.55;
+		}
 	});},
 	get _get_size () {return __get__ (this, function (self) {
 		return self.__size;
@@ -38,8 +51,12 @@ export var Settings =  __class__ ('Settings', [object], {
 	});},
 	get _get_computer () {return __get__ (this, function (self) {
 		return self.__computer;
+	});},
+	get _get_show_coordinates () {return __get__ (this, function (self) {
+		return self.__show_coordinates;
 	});}
 });
+Object.defineProperty (Settings, 'show_coordinates', property.call (Settings, Settings._get_show_coordinates));
 Object.defineProperty (Settings, 'computer', property.call (Settings, Settings._get_computer));
 Object.defineProperty (Settings, 'place_size', property.call (Settings, Settings._get_place_size));
 Object.defineProperty (Settings, 'game_size', property.call (Settings, Settings._get_game_size));

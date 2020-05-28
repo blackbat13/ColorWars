@@ -1,7 +1,10 @@
-// Transcrypt'ed from Python, 2020-05-26 16:07:54
+// Transcrypt'ed from Python, 2020-05-28 13:59:19
+var math = {};
 var random = {};
 import {AssertionError, AttributeError, BaseException, DeprecationWarning, Exception, IndexError, IterableError, KeyError, NotImplementedError, RuntimeWarning, StopIteration, UserWarning, ValueError, Warning, __JsIterator__, __PyIterator__, __Terminal__, __add__, __and__, __call__, __class__, __envir__, __eq__, __floordiv__, __ge__, __get__, __getcm__, __getitem__, __getslice__, __getsm__, __gt__, __i__, __iadd__, __iand__, __idiv__, __ijsmod__, __ilshift__, __imatmul__, __imod__, __imul__, __in__, __init__, __ior__, __ipow__, __irshift__, __isub__, __ixor__, __jsUsePyNext__, __jsmod__, __k__, __kwargtrans__, __le__, __lshift__, __lt__, __matmul__, __mergefields__, __mergekwargtrans__, __mod__, __mul__, __ne__, __neg__, __nest__, __or__, __pow__, __pragma__, __proxy__, __pyUseJsNext__, __rshift__, __setitem__, __setproperty__, __setslice__, __sort__, __specialattrib__, __sub__, __super__, __t__, __terminal__, __truediv__, __withblock__, __xor__, abs, all, any, assert, bool, bytearray, bytes, callable, chr, copy, deepcopy, delattr, dict, dir, divmod, enumerate, filter, float, getattr, hasattr, input, int, isinstance, issubclass, len, list, map, max, min, object, ord, pow, print, property, py_TypeError, py_iter, py_metatype, py_next, py_reversed, py_typeof, range, repr, round, set, setattr, sorted, str, sum, tuple, zip} from './org.transcrypt.__runtime__.js';
 import {Settings} from './lib.settings.js';
+import * as __module_math__ from './math.js';
+__nest__ (math, '', __module_math__);
 import * as __module_random__ from './random.js';
 __nest__ (random, '', __module_random__);
 var __name__ = '__main__';
@@ -174,10 +177,59 @@ export var Game =  __class__ ('Game', [object], {
 		for (var x = 0; x < self._settings.game_size; x++) {
 			for (var y = 0; y < self._settings.game_size; y++) {
 				self._context.fillStyle = self._colors [self._board [x] [y]];
-				self._context.fillRect (x * self._settings.place_size, y * self._settings.place_size, self._settings.place_size, self._settings.place_size);
-				self._context.strokeRect (x * self._settings.place_size, y * self._settings.place_size, self._settings.place_size, self._settings.place_size);
+				self._draw_hexagon (x, y);
+				if (self._settings.show_coordinates) {
+					self._draw_text (x, y, ((('(' + str (x)) + ',') + str (y)) + ')');
+				}
 			}
 		}
+	});},
+	get _draw_player_names () {return __get__ (this, function (self) {
+		var __left0__ = self._players_position [0];
+		var x = __left0__ [0];
+		var y = __left0__ [1];
+		self._draw_text (x, y, 'P1');
+		var __left0__ = self._players_position [1];
+		var x = __left0__ [0];
+		var y = __left0__ [1];
+		self._draw_text (x, y, 'P2');
+	});},
+	get _draw_text () {return __get__ (this, function (self, x, y, text) {
+		var __left0__ = self._coord_to_hex (x, y);
+		var x = __left0__ [0];
+		var y = __left0__ [1];
+		self._context.fillStyle = '#000000';
+		self._context.fillText (text, x + self._settings.place_size / 2, y + self._settings.place_size);
+	});},
+	get _coord_to_hex () {return __get__ (this, function (self, x, y) {
+		var hexagonAngle = 0.523598776;
+		var sideLength = self._settings.place_size;
+		var hexHeight = math.sin (hexagonAngle) * sideLength;
+		var hexRadius = math.cos (hexagonAngle) * sideLength;
+		var hexRectangleWidth = 2 * hexRadius;
+		return tuple ([x * hexRectangleWidth + (__mod__ (y, 2)) * hexRadius, y * (sideLength + hexHeight)]);
+	});},
+	get _draw_hexagon () {return __get__ (this, function (self, x, y) {
+		var __left0__ = self._coord_to_hex (x, y);
+		var x = __left0__ [0];
+		var y = __left0__ [1];
+		var hexagonAngle = 0.523598776;
+		var sideLength = self._settings.place_size;
+		var hexHeight = math.sin (hexagonAngle) * sideLength;
+		var hexRadius = math.cos (hexagonAngle) * sideLength;
+		var hexRectangleHeight = sideLength + 2 * hexHeight;
+		var hexRectangleWidth = 2 * hexRadius;
+		self._context.beginPath ();
+		self._context.moveTo (x + hexRadius, y);
+		self._context.lineTo (x + hexRectangleWidth, y + hexHeight);
+		self._context.lineTo (x + hexRectangleWidth, (y + hexHeight) + sideLength);
+		self._context.lineTo (x + hexRadius, y + hexRectangleHeight);
+		self._context.lineTo (x, (y + sideLength) + hexHeight);
+		self._context.lineTo (x, y + hexHeight);
+		self._context.closePath ();
+		self._context.fill ();
+		self._context.fillStyle = '#000000';
+		self._context.stroke ();
 	});},
 	get _change_color () {return __get__ (this, function (self, x, y, old_color, new_color) {
 		if (x < 0 || y < 0) {
@@ -191,10 +243,22 @@ export var Game =  __class__ ('Game', [object], {
 		}
 		var score = 1;
 		self._board [x] [y] = new_color;
-		score += self._change_color (x + 1, y, old_color, new_color);
-		score += self._change_color (x - 1, y, old_color, new_color);
-		score += self._change_color (x, y + 1, old_color, new_color);
-		score += self._change_color (x, y - 1, old_color, new_color);
+		if (__mod__ (y, 2) == 0) {
+			score += self._change_color (x - 1, y - 1, old_color, new_color);
+			score += self._change_color (x - 1, y, old_color, new_color);
+			score += self._change_color (x - 1, y + 1, old_color, new_color);
+			score += self._change_color (x, y - 1, old_color, new_color);
+			score += self._change_color (x + 1, y, old_color, new_color);
+			score += self._change_color (x, y + 1, old_color, new_color);
+		}
+		else {
+			score += self._change_color (x, y - 1, old_color, new_color);
+			score += self._change_color (x - 1, y, old_color, new_color);
+			score += self._change_color (x, y + 1, old_color, new_color);
+			score += self._change_color (x + 1, y - 1, old_color, new_color);
+			score += self._change_color (x + 1, y, old_color, new_color);
+			score += self._change_color (x + 1, y + 1, old_color, new_color);
+		}
 		return score;
 	});}
 });
