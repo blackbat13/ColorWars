@@ -116,23 +116,14 @@ class Game:
                        range(self._settings.game_size)]
 
     def _draw_board(self):
-        hexagonAngle = 0.523598776
-        sideLength = self._settings.place_size // 2
-
-        hexHeight = math.sin(hexagonAngle) * sideLength
-        hexRadius = math.cos(hexagonAngle) * sideLength
-        hexRectangleWidth = 2 * hexRadius
         for x in range(self._settings.game_size):
             for y in range(self._settings.game_size):
                 self._context.fillStyle = self._colors[self._board[x][y]]
-                # self._context.fillRect(x * self._settings.place_size, y * self._settings.place_size,
-                #                        self._settings.place_size, self._settings.place_size)
-                # self._context.strokeRect(x * self._settings.place_size, y * self._settings.place_size,
-                #                          self._settings.place_size, self._settings.place_size)
                 self._draw_hexagon(x, y)
-                # self._context.fillStyle = "#000000"
-                self._context.fillText("(" + str(x) + "," + str(y) + ")", x * hexRectangleWidth + ((y % 2) * hexRadius),
-                                       y * (sideLength + hexHeight) + sideLength)
+                if self._settings.show_coordinates:
+                    self._draw_text(x, y, "(" + str(x) + "," + str(y) + ")")
+
+    def _draw_player_names(self):
         x, y = self._players_position[0]
         self._draw_text(x, y, "P1")
         x, y = self._players_position[1]
@@ -141,11 +132,11 @@ class Game:
     def _draw_text(self, x, y, text):
         x, y = self._coord_to_hex(x, y)
         self._context.fillStyle = "#000000"
-        self._context.fillText(text, x + self._settings.place_size // 4, y + self._settings.place_size // 2)
+        self._context.fillText(text, x + self._settings.place_size / 2, y + self._settings.place_size)
 
     def _coord_to_hex(self, x, y):
         hexagonAngle = 0.523598776
-        sideLength = self._settings.place_size // 2
+        sideLength = self._settings.place_size
 
         hexHeight = math.sin(hexagonAngle) * sideLength
         hexRadius = math.cos(hexagonAngle) * sideLength
@@ -155,14 +146,12 @@ class Game:
     def _draw_hexagon(self, x, y):
         x, y = self._coord_to_hex(x, y)
         hexagonAngle = 0.523598776
-        sideLength = self._settings.place_size // 2
+        sideLength = self._settings.place_size
 
         hexHeight = math.sin(hexagonAngle) * sideLength
         hexRadius = math.cos(hexagonAngle) * sideLength
         hexRectangleHeight = sideLength + 2 * hexHeight
         hexRectangleWidth = 2 * hexRadius
-
-
 
         self._context.beginPath()
         self._context.moveTo(x + hexRadius, y)
